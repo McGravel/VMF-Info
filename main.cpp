@@ -23,11 +23,15 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
             update_depth(line, visgroup_depth);
 
             std::vector<std::string> split_line;
-            split_line.reserve(3);
+            constexpr int LARGEST_SPLIT_AMOUNT{5};
+            split_line.reserve(LARGEST_SPLIT_AMOUNT);
             boost::split(split_line, line, [](const char &c) { return c == '"'; });
             for (int i = 0; i < split_line.size(); ++i) {
                 if (split_line[i] == "name") {
-                    Visgroup visgroup{.name = split_line[3]};
+                    //Based on current splitting of the string, the line containing the name of the visgroup
+                    // is the 4th element of the vector that boost::split produces.
+                    constexpr int INDEX_OF_VISGROUP_NAME_AFTER_SPLIT{3};
+                    Visgroup visgroup{.name = split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT]};
                     //TODO: further visgroup parsing, will have to be done outside of this function?
                     // probably requires a hash map (unordered_map) in order to convert the visgroup ID into
                     // a key for later access?
