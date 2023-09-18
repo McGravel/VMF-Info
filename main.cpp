@@ -5,6 +5,11 @@
 #include <vector>
 #include "utils.h"
 
+
+void parse_editor_block(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+
+}
+
 void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
     do {
@@ -60,6 +65,10 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
     vmf.entity_count++;
 }
 
+void parse_group_block(VMF_File &vmf, std::ifstream &file, const size_t &depth) {
+
+}
+
 void parse_world_block(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
     //Go through the 7 KeyValues of the world block
@@ -80,8 +89,7 @@ void parse_world_block(VMF_File &vmf, std::ifstream &file, const size_t &return_
         update_depth(line, inner_depth);
         Tokens token{line_to_token(line)};
         if (token == Tokens::Solid) parse_solid(vmf, file, return_depth);
-        //TODO: parse Group blocks
-        //if (token == Tokens::Group) continue;
+        if (token == Tokens::Group) parse_group_block(vmf, file, return_depth);
     } while (inner_depth > return_depth);
 }
 
@@ -97,6 +105,22 @@ void map_report(const VMF_File &vmf) {
     }
 }
 
+void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+
+}
+
+void parse_cordon_block(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+
+}
+
+void parse_version_info(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+
+}
+
+void parse_hidden_block(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+
+}
+
 void parse_file(std::ifstream &current_vmf) {
     VMF_File map{};
     size_t depth{0};
@@ -110,6 +134,9 @@ void parse_file(std::ifstream &current_vmf) {
             case Tokens::Brace_Close:
                 depth--;
                 break;
+            case Tokens::Version_Info:
+                parse_version_info(map, current_vmf, depth);
+                break;
             case Tokens::Visgroup_Block:
                 parse_visgroup(map, current_vmf, depth);
                 break;
@@ -119,6 +146,14 @@ void parse_file(std::ifstream &current_vmf) {
             case Tokens::Entity:
                 parse_entity(map, current_vmf, depth);
                 break;
+            case Tokens::Cameras:
+                parse_cameras(map, current_vmf, depth);
+                break;
+            case Tokens::Cordon:
+                parse_cordon_block(map, current_vmf, depth);
+                break;
+            case Tokens::Hidden:
+                parse_hidden_block(map, current_vmf, depth);
             default:
                 break;
         }
