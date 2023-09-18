@@ -3,68 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-
-enum class Tokens {
-    None,
-    Brace_Open,
-    Brace_Close,
-    Visgroup_Block,
-    Visgroup_Single,
-    Solid,
-    Entity,
-    Side,
-    World,
-    Group,
-    Version_Info,
-    Hidden,
-    Cameras,
-    Cordon,
-    Editor_Block,
-};
-
-struct Visgroup {
-    const std::string name;
-    size_t brush_count{};
-    size_t entity_count{};
-    //TODO: add sub-visgroup support, perhaps with a visgroup variable?
-    // this ties into the VMF_File usage of std::vector<Visgroup> though.
-    // it is probably going to change to a different data type later -
-    // would that affect the data type of this struct? Can we still have a vector?
-    std::vector<Visgroup> sub_visgroups{};
-};
-
-struct VMF_File {
-    size_t brush_count{};
-    size_t side_count{};
-    size_t entity_count{};
-    //TODO: this vector may need to become a hash table in order to use the visgroup id as a key.
-    std::vector<Visgroup> visgroups{};
-};
-
-inline void update_depth(const std::string_view &line, size_t &depth) {
-    assert(depth >= 0 && "Depth check failed.");
-    if (line == "{") depth++;
-    if (line == "}") depth--;
-}
-
-Tokens line_to_token(const std::string_view &line) {
-    if (line == "{") return Tokens::Brace_Open;
-    if (line == "}") return Tokens::Brace_Close;
-    if (line == "versioninfo") return Tokens::Version_Info;
-    if (line == "visgroups") return Tokens::Visgroup_Block;
-    if (line == "visgroup") return Tokens::Visgroup_Single;
-    if (line == "world") return Tokens::World;
-    if (line == "solid") return Tokens::Solid;
-    if (line == "entity") return Tokens::Entity;
-    if (line == "side") return Tokens::Side;
-    if (line == "group") return Tokens::Group;
-    if (line == "hidden") return Tokens::Hidden;
-    if (line == "cameras") return Tokens::Cameras;
-    if (line == "cordon") return Tokens::Cordon;
-    if (line == "editor") return Tokens::Editor_Block;
-
-    return Tokens::None;
-}
+#include "utils.h"
 
 void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
@@ -113,7 +52,7 @@ void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
 }
 
 void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
-    //TODO: is this where we check the visgroup id and add them to the appropriate visgroup's count?
+    //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
     vmf.entity_count++;
 }
 
