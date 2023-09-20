@@ -23,6 +23,9 @@ enum class Tokens {
     Cordon,
     Editor_Block,
     Entity_Class_Name,
+    ID_Num_Visgroup,
+    ID_Num,
+    Name,
 };
 
 struct Visgroup {
