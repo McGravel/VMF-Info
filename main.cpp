@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-void parse_editor_block(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+void parse_editor(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 }
 
@@ -80,7 +80,7 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
                 parse_solid(vmf, file, inner_depth);
                 break;
             case Tokens::Editor_Block:
-                parse_editor_block(vmf, file, inner_depth);
+                parse_editor(vmf, file, inner_depth);
                 break;
             default:
                 break;
@@ -88,11 +88,11 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
     } while (inner_depth > return_depth);
 }
 
-void parse_group_block(VMF_File &vmf, std::ifstream &file, const size_t &depth) {
+void parse_group(VMF_File &vmf, std::ifstream &file, const size_t &depth) {
 
 }
 
-void parse_world_block(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
+void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
     //Go through the 7 KeyValues of the world block
     //TODO: do something with these values?
@@ -109,7 +109,7 @@ void parse_world_block(VMF_File &vmf, std::ifstream &file, const size_t &return_
         update_depth(line, inner_depth);
         Tokens token{line_to_token(line)};
         if (token == Tokens::Solid) parse_solid(vmf, file, return_depth);
-        if (token == Tokens::Group) parse_group_block(vmf, file, return_depth);
+        if (token == Tokens::Group) parse_group(vmf, file, return_depth);
     } while (inner_depth > return_depth);
 }
 
@@ -129,7 +129,7 @@ void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 }
 
-void parse_cordon_block(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+void parse_cordon(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 }
 
@@ -137,11 +137,11 @@ void parse_version_info(VMF_File &vmf, std::ifstream &file, size_t &return_depth
 
 }
 
-void parse_hidden_block(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+void parse_hidden(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 }
 
-void parse_file(std::ifstream &current_vmf) {
+void process_vmf(std::ifstream &current_vmf) {
     VMF_File map{};
     size_t depth{0};
     for (std::string line; std::getline(current_vmf, line);) {
@@ -161,7 +161,7 @@ void parse_file(std::ifstream &current_vmf) {
                 parse_visgroup(map, current_vmf, depth);
                 break;
             case Tokens::World:
-                parse_world_block(map, current_vmf, depth);
+                parse_world(map, current_vmf, depth);
                 break;
             case Tokens::Entity:
                 parse_entity(map, current_vmf, depth);
@@ -170,10 +170,10 @@ void parse_file(std::ifstream &current_vmf) {
                 parse_cameras(map, current_vmf, depth);
                 break;
             case Tokens::Cordon:
-                parse_cordon_block(map, current_vmf, depth);
+                parse_cordon(map, current_vmf, depth);
                 break;
             case Tokens::Hidden:
-                parse_hidden_block(map, current_vmf, depth);
+                parse_hidden(map, current_vmf, depth);
                 break;
             default:
                 break;
@@ -200,7 +200,7 @@ int main(const int argc, const char **argv) {
             std::cout << "File could not be opened.\n";
             continue;
         }
-        parse_file(current_vmf);
+        process_vmf(current_vmf);
 
     }
 }
