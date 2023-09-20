@@ -14,9 +14,6 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
     do {
         std::string line;
         preprocess_line(file, inner_depth, line);
-        //TODO: figure out how to determine sub-visgroups (a visgroup inside a visgroup).
-        // Considering using depth, or perhaps amount of tabs in the line.
-        // EDIT: after checking how the file is laid out, depth should work for us.
         if (line_to_token(line) != Tokens::Visgroup_Single) continue;
         size_t visgroup_depth{inner_depth};
 
@@ -195,6 +192,10 @@ int main(const int argc, const char **argv) {
         const std::filesystem::path current_path{argv[i]};
         std::cout << "\n>>> Now opening " << current_path.filename() << "...\n";
         std::ifstream current_vmf{current_path};
+        if (!exists(current_path)) {
+            std::cout << "Invalid path given.\n";
+            continue;
+        }
         if (current_path.extension() != ".vmf") {
             std::cout << "File is not a VMF.\n";
             continue;
