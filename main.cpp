@@ -68,21 +68,26 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
         std::getline(file, line);
         boost::trim_left(line);
         update_depth(line, inner_depth);
-        Tokens token{line_to_token(line)};
-        switch (token) {
-            case Tokens::Entity_Class_Name:
-                //TODO: add class name to a map somewhere where we can count amount!
-                // classname should be the key, to a value of an int we can modify.
-                printf("Class Name: %s", line.c_str());
-                break;
-            case Tokens::Solid:
-                parse_solid(vmf, file, inner_depth);
-                break;
-            case Tokens::Editor_Block:
-                parse_editor(vmf, file, inner_depth);
-                break;
-            default:
-                break;
+
+        std::vector<std::string> split_line;
+        split_line.reserve(LARGEST_SPLIT_AMOUNT);
+        boost::split(split_line, line, [](const char &c) { return c == '"'; });
+        for (const auto &line_segment: split_line) {
+            Tokens token{line_to_token(line_segment)};
+            switch (token) {
+                case Tokens::Entity_Class_Name:
+                    //TODO: add class name to a map somewhere where we can count amount!
+                    // classname should be the key, to a value of an int we can modify.
+                    break;
+                case Tokens::Solid:
+                    parse_solid(vmf, file, inner_depth);
+                    break;
+                case Tokens::Editor_Block:
+                    parse_editor(vmf, file, inner_depth);
+                    break;
+                default:
+                    break;
+            }
         }
     } while (inner_depth > return_depth);
 }
