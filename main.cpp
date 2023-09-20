@@ -196,6 +196,10 @@ int main(const int argc, const char **argv) {
             std::cout << "Invalid path given.\n";
             continue;
         }
+        if (is_directory(current_path)) {
+            std::cout << "Folder detected. Parsing each file in a folder is not available.\n";
+            continue;
+        }
         if (current_path.extension() != ".vmf") {
             std::cout << "File is not a VMF.\n";
             continue;
