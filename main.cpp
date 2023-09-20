@@ -22,6 +22,9 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
         // EDIT: after checking how the file is laid out, depth should work for us.
         if (line_to_token(line) != Tokens::Visgroup_Single) continue;
         size_t visgroup_depth{inner_depth};
+
+        Visgroup visgroup{};
+        int id_num{-1};
         do {
             std::getline(file, line);
             boost::trim_left(line);
@@ -30,20 +33,23 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
             std::vector<std::string> split_line;
             split_line.reserve(LARGEST_SPLIT_AMOUNT);
             boost::split(split_line, line, [](const char &c) { return c == '"'; });
+            
             for (int i = 0; i < split_line.size(); ++i) {
-                if (split_line[i] == "name") {
-                    //Based on current splitting of the string, the line containing the name of the visgroup
-                    // is the 4th element of the vector that boost::split produces.
-
-                    Visgroup visgroup{.name = split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT]};
-                    //TODO: further visgroup parsing, will have to be done outside of this function?
-                    // probably requires a hash map (unordered_map) in order to convert the visgroup ID into
-                    // a key for later access?
-                    vmf.visgroups.push_back(visgroup);
-                    break;
+                Tokens token{line_to_token(split_line[i])};
+                if (token == Tokens::ID_Num_Visgroup) {
+                    id_num = stoi(split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT]);
+                    continue;
+                }
+                if (token == Tokens::Name) {
+                    visgroup.name = split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT];
+                    continue;
                 }
             }
         } while (visgroup_depth > inner_depth);
+        if (!visgroup.name.empty() && id_num != -1) {
+            std::pair<int, Visgroup> new_group{id_num, visgroup};
+            vmf.visgroups.insert(new_group);
+        }
     } while (inner_depth > return_depth);
 }
 
@@ -125,7 +131,7 @@ void map_report(const VMF_File &vmf) {
 
     if (vmf.visgroups.empty()) return;
     for (const auto &item: vmf.visgroups) {
-        std::cout << "\t\t" << item.name << '\n';
+        std::cout << "\t\t" << item.second.name << '\n';
     }
 }
 
