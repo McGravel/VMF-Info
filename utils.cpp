@@ -18,6 +18,7 @@ Tokens line_to_token(const std::string_view &line) {
     if (line == "cameras") return Tokens::Cameras;
     if (line == "cordon") return Tokens::Cordon;
     if (line == "editor") return Tokens::Editor_Block;
+    if (line == "classname") return Tokens::Entity_Class_Name;
 
     return Tokens::None;
 }

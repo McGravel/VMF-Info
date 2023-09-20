@@ -63,6 +63,29 @@ void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
 void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
     vmf.entity_count++;
+    size_t inner_depth{return_depth};
+    do {
+        std::string line;
+        std::getline(file, line);
+        boost::trim_left(line);
+        update_depth(line, inner_depth);
+        Tokens token{line_to_token(line)};
+        switch (token) {
+            case Tokens::Entity_Class_Name:
+                //TODO: add class name to a map somewhere where we can count amount!
+                // classname should be the key, to a value of an int we can modify.
+                printf("Class Name: %s", line.c_str());
+                break;
+            case Tokens::Solid:
+                parse_solid(vmf, file, inner_depth);
+                break;
+            case Tokens::Editor_Block:
+                parse_editor_block(vmf, file, inner_depth);
+                break;
+            default:
+                break;
+        }
+    } while (inner_depth > return_depth);
 }
 
 void parse_group_block(VMF_File &vmf, std::ifstream &file, const size_t &depth) {
@@ -77,9 +100,6 @@ void parse_world_block(VMF_File &vmf, std::ifstream &file, const size_t &return_
     for (int i = 0; i < 7; ++i) {
         std::getline(file, line);
         boost::trim_left(line);
-        //TODO: This update_depth() only really updates once at the first line with the open brace,
-        // then never again. This is a known quantity since the file is presumably laid out the same.
-        // should I just update this manually instead? Pros? Cons? Overthinking it as usual?
         update_depth(line, inner_depth);
     }
     //Afterward, we will begin parsing the Solid and, later on, the Group blocks inside the World block.

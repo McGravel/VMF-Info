@@ -19,6 +19,7 @@ enum class Tokens {
     Cameras,
     Cordon,
     Editor_Block,
+    Entity_Class_Name,
 };
 
 struct Visgroup {
