@@ -5,7 +5,6 @@
 #include <vector>
 #include "utils.h"
 
-
 void parse_editor(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 }
@@ -14,9 +13,7 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
     size_t inner_depth{return_depth};
     do {
         std::string line;
-        std::getline(file, line);
-        boost::trim_left(line);
-        update_depth(line, inner_depth);
+        preprocess_line(file, inner_depth, line);
         //TODO: figure out how to determine sub-visgroups (a visgroup inside a visgroup).
         // Considering using depth, or perhaps amount of tabs in the line.
         // EDIT: after checking how the file is laid out, depth should work for us.
@@ -26,14 +23,17 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
         Visgroup visgroup{};
         int id_num{-1};
         do {
-            std::getline(file, line);
-            boost::trim_left(line);
-            update_depth(line, visgroup_depth);
+            preprocess_line(file, visgroup_depth, line);
+            if (line == "visgroup") {
+                Visgroup inner_visgroup{};
+                //TODO: parse inner visgroup
+                // Modify this function? Make a function just for sub-functions?
+            }
 
             std::vector<std::string> split_line;
             split_line.reserve(LARGEST_SPLIT_AMOUNT);
             boost::split(split_line, line, [](const char &c) { return c == '"'; });
-            
+
             for (int i = 0; i < split_line.size(); ++i) {
                 Tokens token{line_to_token(split_line[i])};
                 if (token == Tokens::ID_Num_Visgroup) {
@@ -58,9 +58,7 @@ void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
     size_t inner_depth{return_depth};
     do {
         std::string line;
-        std::getline(file, line);
-        boost::trim_left(line);
-        update_depth(line, inner_depth);
+        preprocess_line(file, inner_depth, line);
         if (line_to_token(line) == Tokens::Side) vmf.side_count++;
     } while (inner_depth > return_depth);
 }
@@ -71,9 +69,7 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
     size_t inner_depth{return_depth};
     do {
         std::string line;
-        std::getline(file, line);
-        boost::trim_left(line);
-        update_depth(line, inner_depth);
+        preprocess_line(file, inner_depth, line);
 
         std::vector<std::string> split_line;
         split_line.reserve(LARGEST_SPLIT_AMOUNT);
@@ -102,21 +98,18 @@ void parse_group(VMF_File &vmf, std::ifstream &file, const size_t &depth) {
 
 }
 
+
 void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
     //Go through the 7 KeyValues of the world block
     //TODO: do something with these values?
     std::string line;
     for (int i = 0; i < 7; ++i) {
-        std::getline(file, line);
-        boost::trim_left(line);
-        update_depth(line, inner_depth);
+        preprocess_line(file, inner_depth, line);
     }
     //Afterward, we will begin parsing the Solid and, later on, the Group blocks inside the World block.
     do {
-        std::getline(file, line);
-        boost::trim_left(line);
-        update_depth(line, inner_depth);
+        preprocess_line(file, inner_depth, line);
         Tokens token{line_to_token(line)};
         if (token == Tokens::Solid) parse_solid(vmf, file, return_depth);
         if (token == Tokens::Group) parse_group(vmf, file, return_depth);

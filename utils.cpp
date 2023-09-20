@@ -1,3 +1,5 @@
+#include <fstream>
+#include <boost/algorithm/string.hpp>
 #include <string>
 #include <cassert>
 #include "utils.h"
@@ -30,4 +32,11 @@ void update_depth(const std::string_view &line, size_t &depth) {
     assert(depth >= 0 && "Depth check failed.");
     if (line == "{") depth++;
     if (line == "}") depth--;
+}
+
+// Get a new line, trim its leading whitespace, and update the depth.
+void preprocess_line(std::ifstream &file, size_t &depth, std::string &line) {
+    std::getline(file, line);
+    boost::trim_left(line);
+    update_depth(line, depth);
 }

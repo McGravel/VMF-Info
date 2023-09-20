@@ -51,4 +51,6 @@ void update_depth(const std::string_view &, size_t &);
 
 Tokens line_to_token(const std::string_view &);
 
+void preprocess_line(std::ifstream &file, size_t &depth, std::string &line);
+
 #endif //VMFOVERVIEW_UTILS_H
