@@ -3,6 +3,9 @@
 
 #include <vector>
 
+constexpr int LARGEST_SPLIT_AMOUNT{5};
+constexpr int INDEX_OF_VISGROUP_NAME_AFTER_SPLIT{3};
+
 enum class Tokens {
     None,
     Brace_Open,
