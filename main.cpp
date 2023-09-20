@@ -174,6 +174,7 @@ void parse_file(std::ifstream &current_vmf) {
                 break;
             case Tokens::Hidden:
                 parse_hidden_block(map, current_vmf, depth);
+                break;
             default:
                 break;
         }
