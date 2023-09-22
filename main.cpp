@@ -6,11 +6,23 @@
 #include "utils.h"
 
 void map_report(const VMF_File &vmf) {
+    //Tried to make this inline/anonymous, but couldn't get it to work, so here it is outside of that.
+    constexpr auto has_cams{
+            [](const VMF_File &v) {
+                if (v.has_cameras) {
+                    return "Yes\n";
+                } else {
+                    return "No\n";
+                }
+            }
+    };
+
     std::cout << '\t' << vmf.brush_count << " brushes\n";
     std::cout << '\t' << vmf.side_count << " brush sides\n";
     std::cout << '\t' << vmf.entity_count << " entities\n";
-    std::cout << '\t' << vmf.visgroups.size() << " visgroups:\n";
+    std::cout << '\t' << "Has in-editor camera(s): " << has_cams(vmf);
 
+    std::cout << '\t' << vmf.visgroups.size() << " visgroups:\n";
     if (vmf.visgroups.empty()) return;
     for (const auto &item: vmf.visgroups) {
         std::cout << "\t\t" << item.second.name << '\n';
