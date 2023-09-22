@@ -44,7 +44,7 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
             boost::split(split_line, line, [](const char &c) { return c == '"'; });
 
             for (int i = 0; i < split_line.size(); ++i) {
-                Tokens token{line_to_token(split_line[i])};
+                const Tokens token{line_to_token(split_line[i])};
                 if (token == Tokens::ID_Num_Visgroup) {
                     id_num = stoi(split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT]);
                     continue;
@@ -84,7 +84,7 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
         split_line.reserve(LARGEST_SPLIT_AMOUNT);
         boost::split(split_line, line, [](const char &c) { return c == '"'; });
         for (const auto &line_segment: split_line) {
-            Tokens token{line_to_token(line_segment)};
+            const Tokens token{line_to_token(line_segment)};
             switch (token) {
                 case Tokens::Entity_Class_Name:
                     //TODO: add class name to a map somewhere where we can count amount!
@@ -119,7 +119,7 @@ void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
     //Afterward, we will begin parsing the Solid and, later on, the Group blocks inside the World block.
     do {
         preprocess_line(file, inner_depth, line);
-        Tokens token{line_to_token(line)};
+        const Tokens token{line_to_token(line)};
         if (token == Tokens::Solid) parse_solid(vmf, file, return_depth);
         if (token == Tokens::Group) parse_group(vmf, file, return_depth);
     } while (inner_depth > return_depth);
@@ -147,7 +147,7 @@ void process_vmf(std::ifstream &current_vmf) {
     size_t depth{0};
     for (std::string line; std::getline(current_vmf, line);) {
         boost::trim_left(line);
-        Tokens token{line_to_token(line)};
+        const Tokens token{line_to_token(line)};
         switch (token) {
             case Tokens::Brace_Open:
                 depth++;
