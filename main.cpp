@@ -103,10 +103,11 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
     } while (inner_depth > return_depth);
 }
 
-void parse_group(VMF_File &vmf, std::ifstream &file, const size_t &depth) {
-
+void parse_group(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
+    size_t inner_depth{return_depth};
+    std::string line;
+    preprocess_line(file, inner_depth, line);
 }
-
 
 void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
