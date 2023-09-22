@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 constexpr int LARGEST_SPLIT_AMOUNT{5};
-constexpr int INDEX_OF_VISGROUP_NAME_AFTER_SPLIT{3};
+constexpr int INDEX_OF_SPLIT_LINE_VALUE{3};
 
 enum class Tokens {
     None,

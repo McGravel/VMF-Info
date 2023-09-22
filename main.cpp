@@ -46,11 +46,11 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
             for (int i = 0; i < split_line.size(); ++i) {
                 const Tokens token{line_to_token(split_line[i])};
                 if (token == Tokens::ID_Num_Visgroup) {
-                    id_num = stoi(split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT]);
+                    id_num = stoi(split_line[INDEX_OF_SPLIT_LINE_VALUE]);
                     continue;
                 }
                 if (token == Tokens::Name) {
-                    visgroup.name = split_line[INDEX_OF_VISGROUP_NAME_AFTER_SPLIT];
+                    visgroup.name = split_line[INDEX_OF_SPLIT_LINE_VALUE];
                     continue;
                 }
             }
