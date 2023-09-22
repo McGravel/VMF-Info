@@ -127,7 +127,18 @@ void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
 
 
 void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+    size_t inner_depth{return_depth};
+    std::string line;
+    do {
+        preprocess_line(file, inner_depth, line);
+        std::vector<std::string> split_line{};
+        boost::split(split_line, line, [](const char &c) { return c == '"'; });
+        for (const auto &line_segment: split_line) {
+            if (line_segment != "activecamera") continue;
+            vmf.has_cameras = split_line[INDEX_OF_SPLIT_LINE_VALUE] != "-1";
+        }
 
+    } while (inner_depth > return_depth);
 }
 
 void parse_cordon(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
