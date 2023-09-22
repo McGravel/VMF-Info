@@ -5,6 +5,18 @@
 #include <vector>
 #include "utils.h"
 
+void map_report(const VMF_File &vmf) {
+    std::cout << '\t' << vmf.brush_count << " brushes\n";
+    std::cout << '\t' << vmf.side_count << " brush sides\n";
+    std::cout << '\t' << vmf.entity_count << " entities\n";
+    std::cout << '\t' << vmf.visgroups.size() << " visgroups:\n";
+
+    if (vmf.visgroups.empty()) return;
+    for (const auto &item: vmf.visgroups) {
+        std::cout << "\t\t" << item.second.name << '\n';
+    }
+}
+
 void parse_editor(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 }
@@ -113,17 +125,6 @@ void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
     } while (inner_depth > return_depth);
 }
 
-void map_report(const VMF_File &vmf) {
-    std::cout << '\t' << vmf.brush_count << " brushes\n";
-    std::cout << '\t' << vmf.side_count << " brush sides\n";
-    std::cout << '\t' << vmf.entity_count << " entities\n";
-    std::cout << '\t' << vmf.visgroups.size() << " visgroups:\n";
-
-    if (vmf.visgroups.empty()) return;
-    for (const auto &item: vmf.visgroups) {
-        std::cout << "\t\t" << item.second.name << '\n';
-    }
-}
 
 void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
