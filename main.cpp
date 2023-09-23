@@ -17,15 +17,15 @@ void map_report(const VMF_File &vmf) {
             }
     };
 
-    std::cout << '\t' << vmf.brush_count << " brushes\n";
-    std::cout << '\t' << vmf.side_count << " brush sides\n";
-    std::cout << '\t' << vmf.entity_count << " entities\n";
-    std::cout << '\t' << "Has in-editor camera(s): " << has_cams(vmf);
+    std::cout << vmf.brush_count << " brushes\n";
+    std::cout << vmf.side_count << " brush sides\n";
+    std::cout << vmf.entity_count << " entities\n";
+    std::cout << "Has in-editor camera(s): " << has_cams(vmf);
 
-    std::cout << '\t' << vmf.visgroups.size() << " visgroups:\n";
     if (vmf.visgroups.empty()) return;
+    std::cout << vmf.visgroups.size() << " visgroups:\n";
     for (const auto &item: vmf.visgroups) {
-        std::cout << "\t\t" << item.second.name << '\n';
+        std::cout << "\t" << item.second.name << '\n';
     }
 }
 
