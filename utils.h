@@ -2,6 +2,7 @@
 #define VMFOVERVIEW_UTILS_H
 
 #include <vector>
+#include <map>
 #include <unordered_map>
 
 constexpr int LARGEST_SPLIT_AMOUNT{5};
@@ -47,6 +48,7 @@ struct VMF_File {
     size_t side_count{};
     size_t entity_count{};
     std::unordered_map<int, Visgroup> visgroups{};
+    std::map<std::string, int> entities{};
 };
 
 void update_depth(const std::string_view &line, size_t &depth);

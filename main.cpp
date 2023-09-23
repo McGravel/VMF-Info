@@ -19,6 +19,15 @@ void map_report(const VMF_File &vmf) {
     for (const auto &item: vmf.visgroups) {
         std::cout << "\t" << item.second.name << '\n';
     }
+
+    assert(!vmf.entities.empty());
+    std::cout << "Entity list:\n";
+    size_t total_entities{};
+    for (const auto &item: vmf.entities) {
+        total_entities += item.second;
+        std::cout << '\t' << item.second << '\t' << item.first << '\n';
+    }
+    std::cout << total_entities << " total entities\n";
 }
 
 void parse_editor(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
@@ -76,6 +85,14 @@ void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
     } while (inner_depth > return_depth);
 }
 
+void update_entity_map(VMF_File &vmf, const std::vector<std::string> &split_line) {
+    if (vmf.entities.contains(split_line[INDEX_OF_SPLIT_LINE_VALUE])) {
+        vmf.entities[split_line[INDEX_OF_SPLIT_LINE_VALUE]] += 1;
+    } else {
+        vmf.entities.insert(std::make_pair(split_line[INDEX_OF_SPLIT_LINE_VALUE], 1));
+    }
+}
+
 void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
     vmf.entity_count++;
@@ -91,8 +108,7 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
             const Tokens token{line_to_token(line_segment)};
             switch (token) {
                 case Tokens::Entity_Class_Name:
-                    //TODO: add class name to a map somewhere where we can count amount!
-                    // classname should be the key, to a value of an int we can modify.
+                    update_entity_map(vmf, split_line);
                     break;
                 case Tokens::Solid:
                     parse_solid(vmf, file, inner_depth);
