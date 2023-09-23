@@ -48,9 +48,9 @@ struct VMF_File {
     std::unordered_map<int, Visgroup> visgroups{};
 };
 
-void update_depth(const std::string_view &, size_t &);
+void update_depth(const std::string_view &line, size_t &depth);
 
-Tokens line_to_token(const std::string_view &);
+Tokens line_to_token(const std::string_view &line);
 
 void preprocess_line(std::ifstream &file, size_t &depth, std::string &line);
 
