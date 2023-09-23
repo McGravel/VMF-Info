@@ -42,6 +42,7 @@ struct Visgroup {
 
 struct VMF_File {
     bool has_cameras{false};
+    bool has_active_cordon{false};
     size_t brush_count{};
     size_t side_count{};
     size_t entity_count{};

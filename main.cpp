@@ -6,21 +6,13 @@
 #include "utils.h"
 
 void map_report(const VMF_File &vmf) {
-    //Tried to make this inline/anonymous, but couldn't get it to work, so here it is outside of that.
-    constexpr auto has_cams{
-            [](const VMF_File &v) {
-                if (v.has_cameras) {
-                    return "Yes\n";
-                } else {
-                    return "No\n";
-                }
-            }
-    };
+    constexpr auto yes_or_no_text = [](const auto &item) { return item ? "Yes\n" : "No\n"; };
 
     std::cout << vmf.brush_count << " brushes\n";
     std::cout << vmf.side_count << " brush sides\n";
     std::cout << vmf.entity_count << " entities\n";
-    std::cout << "Has in-editor camera(s): " << has_cams(vmf);
+    std::cout << "Has an active cordon: " << yes_or_no_text(vmf.has_active_cordon);
+    std::cout << "Has in-editor camera(s): " << yes_or_no_text(vmf.has_cameras);
 
     if (vmf.visgroups.empty()) return;
     std::cout << vmf.visgroups.size() << " visgroups:\n";
@@ -155,7 +147,18 @@ void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 }
 
 void parse_cordon(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+    size_t inner_depth{return_depth};
+    std::string line;
+    do {
+        preprocess_line(file, inner_depth, line);
+        std::vector<std::string> split_line{};
+        boost::split(split_line, line, [](const char &c) { return c == '"'; });
+        for (const auto &line_segment: split_line) {
+            if (line_segment != "active") continue;
+            vmf.has_active_cordon = split_line[INDEX_OF_SPLIT_LINE_VALUE] == "1";
+        }
 
+    } while (inner_depth > return_depth);
 }
 
 void parse_version_info(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
