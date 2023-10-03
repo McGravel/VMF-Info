@@ -14,12 +14,13 @@ void map_report(const VMF_File &vmf) {
     std::cout << "Has an active cordon: " << yes_or_no_text(vmf.has_active_cordon);
     std::cout << "Has in-editor camera(s): " << yes_or_no_text(vmf.has_cameras);
 
-    if (vmf.visgroups.empty()) return;
-    std::cout << vmf.visgroups.size() << " visgroups:\n";
-    for (const auto &item: vmf.visgroups) {
-        std::cout << "\t" << item.second.name << '\n';
+    if (!vmf.visgroups.empty()) {
+        std::cout << vmf.visgroups.size() << " visgroups:\n";
+        for (const auto &item: vmf.visgroups) {
+            std::cout << "\t" << item.second.name << '\n';
+        }
     }
-
+    
     assert(!vmf.entities.empty());
     std::cout << "Entity list:\n";
     size_t total_entities{};
