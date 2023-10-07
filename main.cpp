@@ -8,6 +8,7 @@
 void map_report(const VMF_File &vmf) {
     constexpr auto yes_or_no_text = [](const auto &item) { return item ? "Yes\n" : "No\n"; };
 
+    std::cout << "Map Version: " << vmf.version << '\n';
     std::cout << vmf.brush_count << " brushes\n";
     std::cout << vmf.side_count << " brush sides\n";
     std::cout << vmf.entity_count << " entities\n";
@@ -20,7 +21,7 @@ void map_report(const VMF_File &vmf) {
             std::cout << "\t" << item.second.name << '\n';
         }
     }
-    
+
     assert(!vmf.entities.empty());
     std::cout << "Entity list:\n";
     size_t total_entities{};
@@ -49,6 +50,7 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
             preprocess_line(file, visgroup_depth, line);
             if (line == "visgroup") {
                 Visgroup inner_visgroup{};
+                continue;
                 //TODO: parse inner visgroup
                 // Modify this function? Make a function just for sub-functions?
             }
@@ -179,7 +181,20 @@ void parse_cordon(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 }
 
 void parse_version_info(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+    size_t inner_depth{return_depth};
+    std::string line;
+    preprocess_line(file, inner_depth, line);
 
+    while (true) {
+        file >> line;
+        update_depth(line, inner_depth);
+        if (line == "\"mapversion\"") {
+            file >> line;
+            vmf.version = stoi(line.substr(1, line.length() - 1));
+        }
+
+        if (inner_depth <= return_depth) return;
+    }
 }
 
 void parse_hidden(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
