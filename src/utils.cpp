@@ -30,8 +30,14 @@ Tokens line_to_token(const std::string_view &line) {
 
 void update_depth(const std::string_view &line, int &depth) {
     //assert(depth >= 0 && "Depth check failed.");
-    if (line == "{") depth++;
-    if (line == "}") depth--;
+    switch (line[0]) {
+        case '{':
+            ++depth;
+            return;
+        case '}':
+            --depth;
+            return;
+    }
 }
 
 // Get a new line, trim its leading whitespace, and update the depth.
