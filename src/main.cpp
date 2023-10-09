@@ -24,12 +24,9 @@ void map_report(const VMF_File &vmf) {
 
     assert(!vmf.entities.empty());
     std::cout << "Entity list:\n";
-    int total_entities{};
     for (const auto &item: vmf.entities) {
-        total_entities += item.second;
         std::cout << '\t' << item.second << '\t' << item.first << '\n';
     }
-    std::cout << total_entities << " total entities\n";
 }
 
 void parse_editor(VMF_File &vmf, std::ifstream &file, int &return_depth) {
