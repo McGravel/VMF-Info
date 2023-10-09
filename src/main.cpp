@@ -79,13 +79,17 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
 }
 
 void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
-    vmf.brush_count++;
+    ++vmf.brush_count;
     size_t inner_depth{return_depth};
-    do {
-        std::string line;
-        preprocess_line(file, inner_depth, line);
-        if (line_to_token(line) == Tokens::Side) vmf.side_count++;
-    } while (inner_depth > return_depth);
+    std::string line;
+
+    while (true) {
+        file >> line;
+        update_depth(line, inner_depth);
+        if (line == "side") ++vmf.side_count;
+
+        if (inner_depth <= return_depth) return;
+    }
 }
 
 void update_entity_map(VMF_File &vmf, const std::vector<std::string> &split_line) {
