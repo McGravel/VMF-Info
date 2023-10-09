@@ -231,6 +231,11 @@ void process_vmf(std::ifstream &current_vmf) {
 int main(const int argc, const char **argv) {
     if (argc < 2) {
         std::cout << "No files were given.\n";
+#if defined(__linux__) || defined(__MINGW64__)
+        std::cout << "Usage: VMFOverview path/to/map1.vmf path/to/map2.vmx ...\n";
+#elif defined(_WIN32)
+        std::cout << "Usage: VMFOverview.exe \"path\\to\\map1.vmf\" \"path\\to\\map2.vmx\" ...\n";
+#endif
         return 0;
     }
 
