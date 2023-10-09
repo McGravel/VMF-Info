@@ -246,7 +246,7 @@ int main(const int argc, const char **argv) {
             std::cout << "Folder detected. Parsing each file in a folder is not available.\n";
             continue;
         }
-        if (current_path.extension() != ".vmf") {
+        if (current_path.extension() != ".vmf" && current_path.extension() != ".vmx") {
             std::cout << "File is not a VMF.\n";
             continue;
         }
