@@ -75,11 +75,11 @@ void parse_solid(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     }
 }
 
-void update_entity_map(VMF_File &vmf, const std::vector<std::string> &split_line) {
-    if (vmf.entities.contains(split_line[INDEX_OF_SPLIT_LINE_VALUE])) {
-        vmf.entities[split_line[INDEX_OF_SPLIT_LINE_VALUE]] += 1;
+void update_entity_map(VMF_File &vmf, const std::string &line) {
+    if (vmf.entities.contains(line)) {
+        vmf.entities[line] += 1;
     } else {
-        vmf.entities.insert(std::make_pair(split_line[INDEX_OF_SPLIT_LINE_VALUE], 1));
+        vmf.entities.insert(std::make_pair(line, 1));
     }
 }
 
@@ -87,30 +87,27 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
     vmf.entity_count++;
     int inner_depth{return_depth};
-    do {
-        std::string line;
-        preprocess_line(file, inner_depth, line);
+    std::string line;
+    while (true) {
+        file >> line;
+        update_depth(line, inner_depth);
 
-        std::vector<std::string> split_line;
-        split_line.reserve(LARGEST_SPLIT_AMOUNT);
-        boost::split(split_line, line, [](const char &c) { return c == '"'; });
-        for (const auto &line_segment: split_line) {
-            const Tokens token{line_to_token(line_segment)};
-            switch (token) {
-                case Tokens::Entity_Class_Name:
-                    update_entity_map(vmf, split_line);
-                    break;
-                case Tokens::Solid:
-                    parse_solid(vmf, file, inner_depth);
-                    break;
-                case Tokens::Editor_Block:
-                    parse_editor(vmf, file, inner_depth);
-                    break;
-                default:
-                    break;
-            }
+        if (line == "\"classname\"") {
+            file >> line;
+            update_entity_map(vmf, line);
+            continue;
         }
-    } while (inner_depth > return_depth);
+        if (line == "solid") {
+            parse_solid(vmf, file, inner_depth);
+            continue;
+        }
+        if (line == "editor") {
+            parse_editor(vmf, file, inner_depth);
+            continue;
+        }
+
+        if (inner_depth <= return_depth) return;
+    }
 }
 
 void parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
