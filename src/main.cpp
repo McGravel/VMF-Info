@@ -38,44 +38,30 @@ void parse_editor(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
 
 void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
     size_t inner_depth{return_depth};
-    do {
-        std::string line;
-        preprocess_line(file, inner_depth, line);
-        if (line_to_token(line) != Tokens::Visgroup_Single) continue;
-        size_t visgroup_depth{inner_depth};
+    std::string line;
+    Visgroup visgroup{};
+    int id_num{-1};
 
-        Visgroup visgroup{};
-        int id_num{-1};
-        do {
-            preprocess_line(file, visgroup_depth, line);
-            if (line == "visgroup") {
-                Visgroup inner_visgroup{};
-                continue;
-                //TODO: parse inner visgroup
-                // Modify this function? Make a function just for sub-functions?
-            }
+    while (true) {
+        file >> line;
+        update_depth(line, inner_depth);
 
-            std::vector<std::string> split_line;
-            split_line.reserve(LARGEST_SPLIT_AMOUNT);
-            boost::split(split_line, line, [](const char &c) { return c == '"'; });
-
-            for (int i = 0; i < split_line.size(); ++i) {
-                const Tokens token{line_to_token(split_line[i])};
-                if (token == Tokens::ID_Num_Visgroup) {
-                    id_num = stoi(split_line[INDEX_OF_SPLIT_LINE_VALUE]);
-                    continue;
-                }
-                if (token == Tokens::Name) {
-                    visgroup.name = split_line[INDEX_OF_SPLIT_LINE_VALUE];
-                    continue;
-                }
-            }
-        } while (visgroup_depth > inner_depth);
-        if (!visgroup.name.empty() && id_num != -1) {
-            std::pair<int, Visgroup> new_group{id_num, visgroup};
-            vmf.visgroups.insert(new_group);
+        if (line == "\"visgroupid\"") {
+            file >> line;
+            id_num = stoi(line.substr(1, line.length() - 1));
         }
-    } while (inner_depth > return_depth);
+
+        if (line == "\"name\"") {
+            std::vector<std::string> split_line;
+            std::getline(file, line);
+            visgroup.name = line;
+        }
+
+        if (inner_depth <= return_depth) break;
+    }
+    assert(!visgroup.name.empty() && id_num != -1 && "Incomplete visgroup!");
+    std::pair<int, Visgroup> new_group{id_num, visgroup};
+    vmf.visgroups.insert(new_group);
 }
 
 void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
@@ -223,7 +209,7 @@ void process_vmf(std::ifstream &current_vmf) {
             case Tokens::Version_Info:
                 parse_version_info(map, current_vmf, depth);
                 break;
-            case Tokens::Visgroup_Block:
+            case Tokens::Visgroup_Single:
                 parse_visgroup(map, current_vmf, depth);
                 break;
             case Tokens::World:
