@@ -32,8 +32,8 @@ enum class Tokens {
 
 struct Visgroup {
     std::string name;
-    size_t brush_count{};
-    size_t entity_count{};
+    int brush_count{};
+    int entity_count{};
     //TODO: add sub-visgroup support, perhaps with a visgroup variable?
     // this ties into the VMF_File usage of std::vector<Visgroup> though.
     // it is probably going to change to a different data type later -
@@ -44,18 +44,18 @@ struct Visgroup {
 struct VMF_File {
     bool has_cameras{false};
     bool has_active_cordon{false};
-    size_t version{};
-    size_t brush_count{};
-    size_t side_count{};
-    size_t entity_count{};
+    int version{};
+    int brush_count{};
+    int side_count{};
+    int entity_count{};
     std::unordered_map<int, Visgroup> visgroups{};
     std::map<std::string, int> entities{};
 };
 
-void update_depth(const std::string_view &line, size_t &depth);
+void update_depth(const std::string_view &line, int &depth);
 
 Tokens line_to_token(const std::string_view &line);
 
-void preprocess_line(std::ifstream &file, size_t &depth, std::string &line);
+void preprocess_line(std::ifstream &file, int &depth, std::string &line);
 
 #endif //VMFOVERVIEW_UTILS_H

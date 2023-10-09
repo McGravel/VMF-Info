@@ -24,7 +24,7 @@ void map_report(const VMF_File &vmf) {
 
     assert(!vmf.entities.empty());
     std::cout << "Entity list:\n";
-    size_t total_entities{};
+    int total_entities{};
     for (const auto &item: vmf.entities) {
         total_entities += item.second;
         std::cout << '\t' << item.second << '\t' << item.first << '\n';
@@ -32,12 +32,12 @@ void map_report(const VMF_File &vmf) {
     std::cout << total_entities << " total entities\n";
 }
 
-void parse_editor(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+void parse_editor(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 
 }
 
-void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
-    size_t inner_depth{return_depth};
+void parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+    int inner_depth{return_depth};
     std::string line;
     Visgroup visgroup{};
     int id_num{-1};
@@ -64,9 +64,9 @@ void parse_visgroup(VMF_File &vmf, std::ifstream &file, const size_t &return_dep
     vmf.visgroups.insert(new_group);
 }
 
-void parse_solid(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
+void parse_solid(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     ++vmf.brush_count;
-    size_t inner_depth{return_depth};
+    int inner_depth{return_depth};
     std::string line;
 
     while (true) {
@@ -86,10 +86,10 @@ void update_entity_map(VMF_File &vmf, const std::vector<std::string> &split_line
     }
 }
 
-void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
+void parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
     vmf.entity_count++;
-    size_t inner_depth{return_depth};
+    int inner_depth{return_depth};
     do {
         std::string line;
         preprocess_line(file, inner_depth, line);
@@ -116,14 +116,14 @@ void parse_entity(VMF_File &vmf, std::ifstream &file, const size_t &return_depth
     } while (inner_depth > return_depth);
 }
 
-void parse_group(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
-    size_t inner_depth{return_depth};
+void parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+    int inner_depth{return_depth};
     std::string line;
     preprocess_line(file, inner_depth, line);
 }
 
-void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth) {
-    size_t inner_depth{return_depth};
+void parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+    int inner_depth{return_depth};
     //Go through the 7 KeyValues of the world block
     //TODO: do something with these values?
     std::string line;
@@ -140,8 +140,8 @@ void parse_world(VMF_File &vmf, std::ifstream &file, const size_t &return_depth)
 }
 
 
-void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
-    size_t inner_depth{return_depth};
+void parse_cameras(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+    int inner_depth{return_depth};
     std::string line;
 
     while (true) {
@@ -156,8 +156,8 @@ void parse_cameras(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
     }
 }
 
-void parse_cordon(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
-    size_t inner_depth{return_depth};
+void parse_cordon(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+    int inner_depth{return_depth};
     std::string line;
 
     while (true) {
@@ -172,8 +172,8 @@ void parse_cordon(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
     }
 }
 
-void parse_version_info(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
-    size_t inner_depth{return_depth};
+void parse_version_info(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+    int inner_depth{return_depth};
     std::string line;
     preprocess_line(file, inner_depth, line);
 
@@ -189,13 +189,13 @@ void parse_version_info(VMF_File &vmf, std::ifstream &file, size_t &return_depth
     }
 }
 
-void parse_hidden(VMF_File &vmf, std::ifstream &file, size_t &return_depth) {
+void parse_hidden(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 
 }
 
 void process_vmf(std::ifstream &current_vmf) {
     VMF_File map{};
-    size_t depth{0};
+    int depth{0};
     for (std::string line; std::getline(current_vmf, line);) {
         boost::trim_left(line);
         const Tokens token{line_to_token(line)};
