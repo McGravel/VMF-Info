@@ -208,25 +208,35 @@ process_vmf(std::ifstream &current_vmf) {
         boost::trim_left(line);
         const Tokens token { line_to_token(line) };
         switch (token) {
-            case Tokens::Brace_Open:depth++;
+            case Tokens::Brace_Open:
+                depth++;
                 break;
-            case Tokens::Brace_Close:depth--;
+            case Tokens::Brace_Close:
+                depth--;
                 break;
-            case Tokens::Version_Info:parse_version_info(map, current_vmf, depth);
+            case Tokens::Version_Info:
+                parse_version_info(map, current_vmf, depth);
                 break;
-            case Tokens::Visgroup_Single:parse_visgroup(map, current_vmf, depth);
+            case Tokens::Visgroup_Single:
+                parse_visgroup(map, current_vmf, depth);
                 break;
-            case Tokens::World:parse_world(map, current_vmf, depth);
+            case Tokens::World:
+                parse_world(map, current_vmf, depth);
                 break;
-            case Tokens::Entity:parse_entity(map, current_vmf, depth);
+            case Tokens::Entity:
+                parse_entity(map, current_vmf, depth);
                 break;
-            case Tokens::Cameras:parse_cameras(map, current_vmf, depth);
+            case Tokens::Cameras:
+                parse_cameras(map, current_vmf, depth);
                 break;
-            case Tokens::Cordon:parse_cordon(map, current_vmf, depth);
+            case Tokens::Cordon:
+                parse_cordon(map, current_vmf, depth);
                 break;
-            case Tokens::Hidden:parse_hidden(map, current_vmf, depth);
+            case Tokens::Hidden:
+                parse_hidden(map, current_vmf, depth);
                 break;
-            default:break;
+            default:
+                break;
         }
     }
     map_report(map);
