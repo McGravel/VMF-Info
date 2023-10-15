@@ -6,7 +6,7 @@
 
 
 Tokens
-line_to_token(const std::string_view &line) {
+line_to_token(const std::string_view line) {
     if (line == "{") return Tokens::Brace_Open;
     if (line == "}") return Tokens::Brace_Close;
     if (line == "id") return Tokens::ID_Num;
@@ -30,19 +30,13 @@ line_to_token(const std::string_view &line) {
 }
 
 void
-update_depth(const std::string_view &line, int &depth) {
+update_depth(const std::string_view line, int &depth) {
     switch (line[0]) {
-        case '{':++depth;
+        case '{':
+            ++depth;
             return;
-        case '}':--depth;
+        case '}':
+            --depth;
             return;
     }
-}
-
-// Get a new line, trim its leading whitespace, and update the depth.
-void
-preprocess_line(std::ifstream &file, int &depth, std::string &line) {
-    std::getline(file, line);
-    boost::trim_left(line);
-    update_depth(line, depth);
 }

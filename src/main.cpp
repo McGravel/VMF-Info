@@ -53,7 +53,6 @@ parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
         }
 
         if (line == "\"name\"") {
-            std::vector<std::string> split_line;
             std::getline(file, line);
             visgroup.name = line;
         }
@@ -127,13 +126,7 @@ parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 void
 parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     int inner_depth { return_depth };
-    //Go through the 7 KeyValues of the world block
-    //TODO: do something with these values?
     std::string line;
-    for (int i = 0; i < 7; ++i) {
-        preprocess_line(file, inner_depth, line);
-    }
-    //Afterward, we will begin parsing the Solid and, later on, the Group blocks inside the World block.
     do {
         file >> line;
         update_depth(line, inner_depth);
@@ -180,7 +173,6 @@ void
 parse_version_info(VMF_File &vmf, std::ifstream &file, int &return_depth) {
     int inner_depth { return_depth };
     std::string line;
-    preprocess_line(file, inner_depth, line);
 
     while (true) {
         file >> line;
@@ -203,16 +195,10 @@ void
 process_vmf(std::ifstream &current_vmf) {
     VMF_File map {};
     int depth { 0 };
-    for (std::string line; std::getline(current_vmf, line);) {
-        boost::trim_left(line);
+    for (std::string line; current_vmf >> line;) {
+        update_depth(line, depth);
         const Tokens token { line_to_token(line) };
         switch (token) {
-            case Tokens::Brace_Open:
-                depth++;
-                break;
-            case Tokens::Brace_Close:
-                depth--;
-                break;
             case Tokens::Version_Info:
                 parse_version_info(map, current_vmf, depth);
                 break;

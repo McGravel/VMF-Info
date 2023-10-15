@@ -54,12 +54,9 @@ struct VMF_File {
 };
 
 void
-update_depth(const std::string_view &line, int &depth);
+update_depth(std::string_view line, int &depth);
 
 Tokens
-line_to_token(const std::string_view &line);
-
-void
-preprocess_line(std::ifstream &file, int &depth, std::string &line);
+line_to_token(std::string_view line);
 
 #endif //VMFOVERVIEW_UTILS_H
