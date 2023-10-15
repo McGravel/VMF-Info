@@ -122,7 +122,6 @@ void
 parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     int inner_depth { return_depth };
     std::string line;
-    preprocess_line(file, inner_depth, line);
 }
 
 void
@@ -136,10 +135,10 @@ parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     }
     //Afterward, we will begin parsing the Solid and, later on, the Group blocks inside the World block.
     do {
-        preprocess_line(file, inner_depth, line);
-        const Tokens token { line_to_token(line) };
-        if (token == Tokens::Solid) parse_solid(vmf, file, return_depth);
-        if (token == Tokens::Group) parse_group(vmf, file, return_depth);
+        file >> line;
+        update_depth(line, inner_depth);
+        if (line == "solid") parse_solid(vmf, file, return_depth);
+        if (line == "group") parse_group(vmf, file, return_depth);
     } while (inner_depth > return_depth);
 }
 
