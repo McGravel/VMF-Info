@@ -66,7 +66,7 @@ parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 
 void
 parse_solid(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
-    ++vmf.brush_count;
+    vmf.brush_count += 1;
     int inner_depth { return_depth };
     std::string line;
 
@@ -92,7 +92,7 @@ update_entity_map(VMF_File &vmf, const std::string &line) {
 void
 parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
-    vmf.entity_count++;
+    vmf.entity_count += 1;
     int inner_depth { return_depth };
     std::string line;
     while (true) {
