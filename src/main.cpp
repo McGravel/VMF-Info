@@ -95,6 +95,7 @@ parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     vmf.entity_count += 1;
     int inner_depth { return_depth };
     std::string line;
+
     while (true) {
         file >> line;
         update_depth(line, inner_depth);
@@ -119,8 +120,8 @@ parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 
 void
 parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
-    int inner_depth { return_depth };
-    std::string line;
+//    int inner_depth { return_depth };
+//    std::string line;
 }
 
 void
@@ -260,6 +261,5 @@ main(const int argc, const char **argv) {
             continue;
         }
         process_vmf(current_vmf);
-
     }
 }
