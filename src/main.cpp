@@ -128,12 +128,15 @@ void
 parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
     int inner_depth { return_depth };
     std::string line;
-    do {
+
+    while (true) {
         file >> line;
         update_depth(line, inner_depth);
         if (line == "solid") parse_solid(vmf, file, return_depth);
         if (line == "group") parse_group(vmf, file, return_depth);
-    } while (inner_depth > return_depth);
+
+        if (inner_depth <= return_depth) return;
+    }
 }
 
 void
