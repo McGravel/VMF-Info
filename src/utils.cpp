@@ -1,4 +1,5 @@
 #include <string>
+#include <cassert>
 #include "utils.h"
 
 
@@ -33,5 +34,8 @@ update_depth(const std::string_view line, int depth) {
             return depth + 1;
         case '}':
             return depth - 1;
+        default:
+            assert(false && "Update Depth called on invalid character/string");
+            return depth;
     }
 }
