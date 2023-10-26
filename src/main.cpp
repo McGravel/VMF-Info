@@ -32,14 +32,13 @@ map_report(const VMF_File &vmf) {
 }
 
 void
-parse_editor(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+parse_editor(VMF_File &vmf, std::ifstream &file, int &return_depth, std::string &line) {
 
 }
 
 void
-parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth, std::string &line) {
     int inner_depth { return_depth };
-    std::string line;
     Visgroup visgroup {};
     int id_num { -1 };
 
@@ -65,10 +64,9 @@ parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 }
 
 void
-parse_solid(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+parse_solid(VMF_File &vmf, std::ifstream &file, const int &return_depth, std::string &line) {
     vmf.brush_count += 1;
     int inner_depth { return_depth };
-    std::string line;
 
     while (true) {
         file >> line;
@@ -90,11 +88,10 @@ update_entity_map(VMF_File &vmf, const std::string &line) {
 }
 
 void
-parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth, std::string &line) {
     //TODO: is this where we check the visgroup id and add them to the count of the appropriate one?
     vmf.entity_count += 1;
     int inner_depth { return_depth };
-    std::string line;
 
     while (true) {
         file >> line;
@@ -106,11 +103,11 @@ parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
             continue;
         }
         if (line == "solid") {
-            parse_solid(vmf, file, inner_depth);
+            parse_solid(vmf, file, inner_depth, line);
             continue;
         }
         if (line == "editor") {
-            parse_editor(vmf, file, inner_depth);
+            parse_editor(vmf, file, inner_depth, line);
             continue;
         }
 
@@ -119,30 +116,27 @@ parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 }
 
 void
-parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+parse_group(VMF_File &vmf, std::ifstream &file, const int &return_depth, std::string &line) {
 //    int inner_depth { return_depth };
-//    std::string line;
 }
 
 void
-parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
+parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth, std::string &line) {
     int inner_depth { return_depth };
-    std::string line;
 
     while (true) {
         file >> line;
-        if (line == "solid") parse_solid(vmf, file, return_depth);
-        if (line == "group") parse_group(vmf, file, return_depth);
         inner_depth = update_depth(line, inner_depth);
+        if (line == "solid") parse_solid(vmf, file, return_depth, line);
+        if (line == "group") parse_group(vmf, file, return_depth, line);
 
         if (inner_depth <= return_depth) return;
     }
 }
 
 void
-parse_cameras(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+parse_cameras(VMF_File &vmf, std::ifstream &file, int &return_depth, std::string line) {
     int inner_depth { return_depth };
-    std::string line;
 
     while (true) {
         file >> line;
@@ -157,9 +151,8 @@ parse_cameras(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 }
 
 void
-parse_cordon(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+parse_cordon(VMF_File &vmf, std::ifstream &file, int &return_depth, std::string &line) {
     int inner_depth { return_depth };
-    std::string line;
 
     while (true) {
         file >> line;
@@ -174,9 +167,8 @@ parse_cordon(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 }
 
 void
-parse_version_info(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+parse_version_info(VMF_File &vmf, std::ifstream &file, int &return_depth, std::string &line) {
     int inner_depth { return_depth };
-    std::string line;
 
     while (true) {
         file >> line;
@@ -191,7 +183,7 @@ parse_version_info(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 }
 
 void
-parse_hidden(VMF_File &vmf, std::ifstream &file, int &return_depth) {
+parse_hidden(VMF_File &vmf, std::ifstream &file, int &return_depth, std::string &line) {
 
 }
 
@@ -204,25 +196,25 @@ process_vmf(std::ifstream &current_vmf) {
         const Tokens token { line_to_token(line) };
         switch (token) {
             case Tokens::Version_Info:
-                parse_version_info(map, current_vmf, depth);
+                parse_version_info(map, current_vmf, depth, line);
                 break;
             case Tokens::Visgroup_Single:
-                parse_visgroup(map, current_vmf, depth);
+                parse_visgroup(map, current_vmf, depth, line);
                 break;
             case Tokens::World:
-                parse_world(map, current_vmf, depth);
+                parse_world(map, current_vmf, depth, line);
                 break;
             case Tokens::Entity:
-                parse_entity(map, current_vmf, depth);
+                parse_entity(map, current_vmf, depth, line);
                 break;
             case Tokens::Cameras:
-                parse_cameras(map, current_vmf, depth);
+                parse_cameras(map, current_vmf, depth, line);
                 break;
             case Tokens::Cordon:
-                parse_cordon(map, current_vmf, depth);
+                parse_cordon(map, current_vmf, depth, line);
                 break;
             case Tokens::Hidden:
-                parse_hidden(map, current_vmf, depth);
+                parse_hidden(map, current_vmf, depth, line);
                 break;
             default:
                 break;
