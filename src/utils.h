@@ -50,8 +50,8 @@ struct VMF_File {
     std::map<std::string, int> entities {};
 };
 
-void
-update_depth(std::string_view line, int &depth);
+int
+update_depth(std::string_view line, int depth);
 
 Tokens
 line_to_token(std::string_view line);

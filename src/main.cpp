@@ -45,7 +45,7 @@ parse_visgroup(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
+        inner_depth = update_depth(line, inner_depth);
 
         if (line == "\"visgroupid\"") {
             file >> line;
@@ -72,7 +72,7 @@ parse_solid(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
+        inner_depth = update_depth(line, inner_depth);
         if (line == "side") ++vmf.side_count;
 
         if (inner_depth <= return_depth) return;
@@ -98,7 +98,7 @@ parse_entity(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
+        inner_depth = update_depth(line, inner_depth);
 
         if (line == "\"classname\"") {
             file >> line;
@@ -131,9 +131,9 @@ parse_world(VMF_File &vmf, std::ifstream &file, const int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
         if (line == "solid") parse_solid(vmf, file, return_depth);
         if (line == "group") parse_group(vmf, file, return_depth);
+        inner_depth = update_depth(line, inner_depth);
 
         if (inner_depth <= return_depth) return;
     }
@@ -146,7 +146,7 @@ parse_cameras(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
+        inner_depth = update_depth(line, inner_depth);
         if (line == "\"activecamera\"") {
             file >> line;
             vmf.has_cameras = (line != "\"-1\"");
@@ -163,7 +163,7 @@ parse_cordon(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
+        inner_depth = update_depth(line, inner_depth);
         if (line == "\"active\"") {
             file >> line;
             vmf.has_active_cordon = (line == "\"1\"");
@@ -180,7 +180,7 @@ parse_version_info(VMF_File &vmf, std::ifstream &file, int &return_depth) {
 
     while (true) {
         file >> line;
-        update_depth(line, inner_depth);
+        inner_depth = update_depth(line, inner_depth);
         if (line == "\"mapversion\"") {
             file >> line;
             vmf.version = stoi(line.substr(1, line.length() - 1));

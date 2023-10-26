@@ -26,14 +26,12 @@ line_to_token(const std::string_view line) {
     return Tokens::None;
 }
 
-void
-update_depth(const std::string_view line, int &depth) {
+int
+update_depth(const std::string_view line, int depth) {
     switch (line[0]) {
         case '{':
-            ++depth;
-            return;
+            return depth + 1;
         case '}':
-            --depth;
-            return;
+            return depth - 1;
     }
 }
